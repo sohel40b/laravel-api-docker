@@ -6,6 +6,9 @@ COPY backend/composer.lock backend/composer.json backend/var/www/
 # Set working directory
 WORKDIR /var/www
 
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && apt-get update && apt-get install -y nodejs
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
