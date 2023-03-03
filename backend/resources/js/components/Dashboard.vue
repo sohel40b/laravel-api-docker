@@ -5,8 +5,8 @@
             <div class="container">
                 <div class="row gx-lg-5 align-items-center">
                     <div class="col-lg-6 mb-5 mb-lg-0">
-                        <h1 class="my-5 display-2 ls-tight">
-                            Welcome to Dashboard Page <br />
+                        <h1 class="my-5 display-3 ls-tight" v-if="user">
+                            Welcome {{ user.name }}<br />
                         </h1>
                         <p style="color: hsl(217, 10%, 50.8%)">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -24,16 +24,38 @@
 
 <script>
 import { useRouter } from "vue-router"
+import { useStore } from 'vuex'
 export default{
     setup(){
         const router = useRouter();
+        const store = useStore();
+
         function logout(){
-            localStorage.removeItem('token');
+            store.dispatch('removeToken');
             router.push({name:'Login'})
         }
         return {
             logout
         }
-    }
+    },
+    data() {
+        return {
+            user: null,
+        };
+    },
+    async mounted() {
+        const store = useStore();
+        try {
+            const response = await axios.get('/api/user',{
+                headers: {
+                    'Authorization': `Bearer ${store.getters.getToken}`,
+                },
+            });
+            console.log(response);
+            this.user = response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
 }
 </script>

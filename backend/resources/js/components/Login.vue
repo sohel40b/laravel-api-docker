@@ -6,6 +6,7 @@
             class="img-fluid" alt="Sample image">
         </div>
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+            <h2 class="mb-4"> Login </h2>
             <p class="text-danger" v-if="error">{{ error }}</p>
             <form @submit.prevent="login">
                 <div class="form-outline mb-3">
@@ -29,9 +30,11 @@
 <script>
 import { reactive,ref } from 'vue'
 import { useRouter } from "vue-router"
+import { useStore } from 'vuex'
 export default{
     setup(){
         const router = useRouter()
+        const store = useStore()
         let form = reactive({
             email: '',
             password: ''
@@ -39,9 +42,11 @@ export default{
         let error = ref('')
         const login = async() =>{
             await axios.post('/api/login',form).then(res=>{
-                if(res.success = true){
-                    localStorage.setItem('token',res.data.token);
+                console.log(res.data.status);
+                if(res.data.status == true){
+                    store.dispatch('setToken',res.data.token);
                     router.push({name:'Dashboard'})
+                    console.log('success');
                 }else{
                     error.value = res.data.message;
                 }

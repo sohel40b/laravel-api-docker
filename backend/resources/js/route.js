@@ -4,6 +4,7 @@ import Welcome from './components/Welcome.vue'
 import Register from './components/Register.vue'
 import Login from './components/Login.vue'
 import Dashboard from './components/Dashboard.vue'
+import store from './store/index.js'
 
 const routes = [
     {
@@ -51,10 +52,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to,from) =>{
-    if(to.meta.auth && !localStorage.getItem('token')){
+    if(to.meta.auth && store.getters.getToken == 0){
         return { name : 'Login'}
     }
-    if(to.meta.auth == false && localStorage.getItem('token')){
+    if(to.meta.auth == false && store.getters.getToken != 0){
         return { name : 'Dashboard'}
     }
 })

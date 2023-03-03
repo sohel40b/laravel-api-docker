@@ -6,29 +6,29 @@
                 class="img-fluid" alt="Sample image">
             </div>
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 mt-5">
-                <form>
+                <h2 class="mb-4"> Register </h2>
+                <p class="text-danger" v-for="error in errors" :key="error">
+                    <span v-for="err in error" :key="err">{{ err }}</span>
+                </p>
+                <form @submit.prevent="register">
                     <div class="form-outline mb-3">
                         <label class="form-label" for="form3Example5">Full Name</label>
                         <input type="text" id="form3Example5" class="form-control" placeholder="Enter name" v-model="form.name"/>
-                        <small class="form-text text-danger" v-if="errors.name">{{errors.name[0]}}</small>
                     </div>
                     <div class="form-outline mb-3">
                         <label class="form-label" for="form3Example3">Email address</label>
                         <input type="email" id="form3Example3" class="form-control" placeholder="Enter a valid email address" v-model="form.email"/>
-                        <small class="form-text text-danger" v-if="errors.email">{{errors.email[0]}}</small>
                     </div>
                     <div class="form-outline mb-3">
                         <label class="form-label" for="form3Example4">Password</label>
                         <input type="password" id="form3Example4" class="form-control" placeholder="Enter password" v-model="form.password"/>
-                        <small class="form-text text-danger" v-if="errors.password">{{errors.password[0]}}</small>
                     </div>
                     <div class="form-outline mb-3">
                         <label class="form-label" for="form3Example6">Confirm Password</label>
                         <input type="password" id="form3Example6" class="form-control" placeholder="Enter confirm password" v-model="form.password_confirmation"/>
-                        <small class="form-text text-danger" v-if="errors.password_confirmation">{{errors.password_confirmation[0]}}</small>
                     </div>
                     <div class="text-center text-lg-start mt-4 pt-2">
-                        <button type="submit" @click.prevent="saveForm" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Register</button>
+                        <button type="submit" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Register</button>
                         <p class="small fw-bold mt-2 pt-1 mb-0">If you already have an account! <router-link to='/login' class="link-danger">Login</router-link></p>
                     </div>
                 </form>
@@ -38,26 +38,35 @@
 </template>
 
 <script>
-export default {
-    data(){
-        return{
-            form:{
-                name: '',
-                email: '',
-                password:'',
-                password_confirmation:''
-            },
-            errors:[]
-        }
-    },
-    methods:{
-        saveForm(){
-            axios.post('/api/register', this.form).then(() =>{
-                this.$router.push({ name: "Login"});
-                console.log('User Sucessfully Created Account');
-            }).catch((error) =>{
-                this.errors = error.response.data.errors;
+import { reactive,ref } from 'vue'
+import { useRouter } from "vue-router"
+import { useStore } from 'vuex'
+export default{
+    setup(){
+        const router = useRouter()
+        const store = useStore()
+        let form = reactive({
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+        });
+        let errors = ref([])
+        const register = async() =>{
+            await axios.post('/api/register',form).then(res=>{
+                if(res.data.status == true){
+                    store.dispatch('setToken',res.data.token)
+                    router.push({name:'Dashboard'});
+                    console.log('success');
+                }else{
+                    errors.value = res.data.errors;
+                }
             })
+        }
+        return{
+            form,
+            register,
+            errors
         }
     }
 }
