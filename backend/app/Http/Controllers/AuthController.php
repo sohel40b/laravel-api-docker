@@ -23,23 +23,24 @@ class AuthController extends Controller
                     'status' => false,
                     'message' => 'validation error',
                     'errors' => $validateUser->errors()
-                ], 401);
+                ], 200);
             }
 
-            if(!Auth::attempt($request->only(['email', 'password']))){
+            if(Auth::attempt($request->only(['email', 'password']))){
+                $user = User::where('email', $request->email)->first();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'User Logged In Successfully',
+                    'data' => Auth::user(),
+                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                ], 200);
+            }else{
                 return response()->json([
                     'status' => false,
                     'message' => 'Email & Password does not match with our record.',
-                ], 401);
+                ], 200);
             }
-
-            $user = User::where('email', $request->email)->first();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'User Logged In Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);
 
         } catch (\Throwable $th) {
             return response()->json([
@@ -56,7 +57,7 @@ class AuthController extends Controller
             [
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required'
+                'password' => 'required|confirmed'
             ]);
 
             if($validateUser->fails()){
@@ -64,7 +65,7 @@ class AuthController extends Controller
                     'status' => false,
                     'message' => 'validation error',
                     'errors' => $validateUser->errors()
-                ], 401);
+                ], 200);
             }
 
             $user = User::create([
