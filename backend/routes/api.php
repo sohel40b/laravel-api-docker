@@ -15,5 +15,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get("dashboard", [AuthController::class,'dashboard']);
+    Route::apiResource('todos', App\Http\Controllers\TodoController::class);
 });

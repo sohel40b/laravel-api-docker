@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from './store/index.js'
 import NotFound from './components/NotFound.vue'
 import Welcome from './components/Welcome.vue'
 import Register from './components/Register.vue'
 import Login from './components/Login.vue'
 import Dashboard from './components/Dashboard.vue'
-import store from './store/index.js'
+import TodoList from './components/TodoList.vue'
 
 const routes = [
     {
@@ -40,6 +41,14 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard,
+        meta:{
+            auth:true
+        }
+    },
+    {
+        path: '/todo-list',
+        name: 'TodoList',
+        component: TodoList,
         meta:{
             auth:true
         }

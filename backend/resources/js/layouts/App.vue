@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg bg-body-secondary">
         <div class="container-fluid">
-            <router-link to='/' class="navbar-brand fw-bold ">Todo List</router-link>
+            <router-link to='/' class="navbar-brand fw-bold ">Todo APP</router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -16,7 +16,7 @@
                             <router-link to='/register' class="nav-link" v-if="$store.getters.getToken == 0">Register</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to='/dashboard' class="nav-link fw-bold" v-if="$store.getters.getToken != 0">Todo List</router-link>
+                            <router-link to='/todo-list' class="nav-link fw-bold" v-if="$store.getters.getToken != 0">Todo List</router-link>
                         </li>
                     </ul>
                 </div>
