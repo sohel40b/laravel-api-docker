@@ -51,50 +51,32 @@
 </template>
 
 <script>
-import { reactive,ref,watchEffect } from 'vue'
+import { reactive,ref } from 'vue'
 import { useRouter } from "vue-router"
-import { useStore } from 'vuex'
+import { UserStore } from '@/store/UserStore.js'
 export default{
     data() {
         return {
             todos: [],
         };
     },
-    async mounted() {
-        const store = useStore();
+    async updated() {
+        const store = UserStore();
         const data = ref([]);
         try {
             const response = await axios.get('/api/todos',{
                 headers: {
-                    'Authorization': `Bearer ${store.getters.getToken}`,
+                    'Authorization': `Bearer ${store.getToken}`,
                 },
             });
-            console.log(response.data.data);
             this.todos = response.data.data;
-
-            watchEffect(() => {
-                this.todos.forEach((item, index) => {
-                    if (item.isDeleted) {
-                        axios.delete(`/api/todos/${item.id}`)
-                        .then(response => {
-                            this.todos.splice(index, 1);
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        });
-                    }
-                });
-            });
-            const deleteItem = (index) => {
-                this.todos[index].isDeleted = true;
-            };
         } catch (error) {
             console.log(error);
         }
     },
     setup(){
         const router = useRouter()
-        const store = useStore();
+        const store = UserStore();
         let form = reactive({
             name: '',
         });
@@ -102,12 +84,12 @@ export default{
         const todo = async() =>{
             await axios.post('/api/todos',form,{
                 headers: {
-                    'Authorization': `Bearer ${store.getters.getToken}`,
+                    'Authorization': `Bearer ${store.getToken}`,
                 },
             }).then(res=>{
                 if(res.data.status == true){
                     router.push({name:'TodoList'})
-                    console.log('success');
+                    console.log('Data Found');
                 }else{
                     error.value = res.data.message;
                 }
@@ -119,10 +101,10 @@ export default{
 
             axios.delete('/api/todos/'+id,{
                 headers: {
-                    'Authorization': `Bearer ${store.getters.getToken}`,
+                    'Authorization': `Bearer ${store.getToken}`,
                 },
             }).then(res=>{
-                console.log(res);
+                console.log('Sucessfully Deleted');
             }).catch(e=>{
                 error.value = e.response.data.message
             })

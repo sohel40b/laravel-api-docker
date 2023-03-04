@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->tinyInteger('status')->default('1');
-            $table->unsignedInteger('task_id')->nullable();
             $table->timestamps();
         });
     }

@@ -24,14 +24,14 @@
 
 <script>
 import { useRouter } from "vue-router"
-import { useStore } from 'vuex'
+import { UserStore } from '@/store/UserStore.js'
 export default{
     setup(){
         const router = useRouter();
-        const store = useStore();
+        const store = UserStore();
 
         function logout(){
-            store.dispatch('removeToken');
+            store.removeToken();
             router.push({name:'Login'})
         }
         return {
@@ -44,11 +44,11 @@ export default{
         };
     },
     async mounted() {
-        const store = useStore();
+        const store = UserStore();
         try {
             const response = await axios.get('/api/user',{
                 headers: {
-                    'Authorization': `Bearer ${store.getters.getToken}`,
+                    'Authorization': `Bearer ${store.getToken}`,
                 },
             });
             console.log(response);

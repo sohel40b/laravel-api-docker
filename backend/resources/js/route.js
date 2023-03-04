@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from './store/index.js'
+import { UserStore } from '@/store/UserStore.js'
 import NotFound from './components/NotFound.vue'
 import Welcome from './components/Welcome.vue'
 import Register from './components/Register.vue'
@@ -61,10 +61,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to,from) =>{
-    if(to.meta.auth && store.getters.getToken == 0){
+    const store = UserStore();
+    if(to.meta.auth && store.token == 0){
         return { name : 'Login'}
     }
-    if(to.meta.auth == false && store.getters.getToken != 0){
+    if(to.meta.auth == false && store.token != 0){
         return { name : 'Dashboard'}
     }
 })

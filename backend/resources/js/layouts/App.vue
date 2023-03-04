@@ -10,13 +10,13 @@
                 <div class="d-flex">
                     <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                         <li class="nav-item">
-                            <router-link to='/login' class="nav-link" v-if="$store.getters.getToken == 0">Login</router-link>
+                            <router-link to='/login' class="nav-link" v-if="token == 0">Login</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to='/register' class="nav-link" v-if="$store.getters.getToken == 0">Register</router-link>
+                            <router-link to='/register' class="nav-link" v-if="token == 0">Register</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to='/todo-list' class="nav-link fw-bold" v-if="$store.getters.getToken != 0">Todo List</router-link>
+                            <router-link to='/todo-list' class="nav-link fw-bold" v-if="token != 0">Todo List</router-link>
                         </li>
                     </ul>
                 </div>
@@ -25,3 +25,13 @@
     </nav>
     <router-view></router-view>
 </template>
+<script>
+import { ref } from 'vue'
+import { UserStore } from '@/store/UserStore.js'
+import { mapState } from 'pinia'
+export default ({
+    computed: {
+        ...mapState(UserStore,['token'])
+    }
+})
+</script>

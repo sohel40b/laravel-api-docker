@@ -30,11 +30,11 @@
 <script>
 import { reactive,ref } from 'vue'
 import { useRouter } from "vue-router"
-import { useStore } from 'vuex'
+import { UserStore } from '@/store/UserStore.js'
 export default{
     setup(){
-        const router = useRouter()
-        const store = useStore()
+        const router = useRouter();
+        const store = UserStore();
         let form = reactive({
             email: '',
             password: ''
@@ -42,9 +42,9 @@ export default{
         let error = ref('')
         const login = async() =>{
             await axios.post('/api/login',form).then(res=>{
-                console.log(res.data.status);
+                console.log(res);
                 if(res.data.status == true){
-                    store.dispatch('setToken',res.data.token);
+                    store.setToken(res.data.token)
                     router.push({name:'Dashboard'})
                     console.log('success');
                 }else{
