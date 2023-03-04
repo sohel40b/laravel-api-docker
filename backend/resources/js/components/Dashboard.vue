@@ -51,7 +51,6 @@ export default{
                     'Authorization': `Bearer ${store.getToken}`,
                 },
             });
-            console.log(response);
             this.user = response.data;
         } catch (error) {
             console.log(error);

@@ -16,4 +16,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('todos', App\Http\Controllers\TodoController::class);
+    Route::apiResource('tasks', App\Http\Controllers\TaskController::class);
 });

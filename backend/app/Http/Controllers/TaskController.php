@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Todo;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\TodoRequest;
 
-class TodoController extends Controller
+use Illuminate\Http\Request;
+use App\Models\Task;
+use App\Http\Requests\TaskRequest;
+
+class TaskController extends Controller
 {
     public function index()
     {
-        $data = Todo::get();
+        $data = Task::get();
         if ($data->isNotEmpty()) {
             return response()->json([
                 'status' => true,
@@ -23,16 +23,15 @@ class TodoController extends Controller
                 'message' => 'Data not found',
             ], 200);
         }
-
     }
 
-    public function store(TodoRequest $request)
+    public function store(TaskRequest $request)
     {
         try {
-            Todo::create($request->validated());
+            Task::create($request->validated());
             return response()->json([
                 'status' => true,
-                'message' => 'Todo Created Successfully',
+                'message' => 'Task Created Successfully',
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -44,11 +43,11 @@ class TodoController extends Controller
 
     public function destroy($id)
     {
-        $data = Todo::where('id',$id)->delete();
+        $data = Task::where('id',$id)->delete();
         if ($data == 1) {
             return response()->json([
                 'status' => true,
-                'message' => 'Todo Deleted Successfully',
+                'message' => 'Task Deleted Successfully',
             ], 200);
         } else {
             return response()->json([

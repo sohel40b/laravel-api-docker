@@ -3,10 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 
-class TodoRequest extends FormRequest
+class TaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,15 +24,8 @@ class TodoRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'task_name' => 'required',
+            'todo_id' => 'required',
         ];
-    }
-
-    public function failedValidation(Validator $validator){
-        throw new HttpResponseException(response()->json([
-            'status' => 200,
-            'success'   => false,
-            'message'   => $validator->errors()
-        ]));
     }
 }

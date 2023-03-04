@@ -18,6 +18,9 @@
                         <li class="nav-item">
                             <router-link to='/todo-list' class="nav-link fw-bold" v-if="token != 0">Todo List</router-link>
                         </li>
+                        <li class="nav-item">
+                            <router-link to='/task-list' class="nav-link fw-bold" v-if="token != 0">Task List</router-link>
+                        </li>
                     </ul>
                 </div>
             </div>

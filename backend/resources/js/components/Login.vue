@@ -42,7 +42,6 @@ export default{
         let error = ref('')
         const login = async() =>{
             await axios.post('/api/login',form).then(res=>{
-                console.log(res);
                 if(res.data.status == true){
                     store.setToken(res.data.token)
                     router.push({name:'Dashboard'})
