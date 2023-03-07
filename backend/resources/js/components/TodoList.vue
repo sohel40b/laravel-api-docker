@@ -52,29 +52,10 @@
 </template>
 
 <script>
-import { reactive,ref } from 'vue'
+import { reactive,ref,toRefs } from 'vue'
 import { useRouter } from "vue-router"
 import { UserStore } from '@/store/UserStore.js'
 export default{
-    data() {
-        return {
-            todos: [],
-        };
-    },
-    async updated() {
-        const store = UserStore();
-        const data = ref([]);
-        try {
-            const response = await axios.get('/api/todos',{
-                headers: {
-                    'Authorization': `Bearer ${store.getToken}`,
-                },
-            });
-            this.todos = response.data.data;
-        } catch (error) {
-            console.log(error);
-        }
-    },
     setup(){
         const router = useRouter()
         const store = UserStore();
@@ -83,6 +64,18 @@ export default{
         });
         let error = ref('')
         let messages = ref('')
+        const state = reactive({
+            todos: []
+        })
+        const fetchTodos = async () => {
+            const response = await axios.get('/api/todos',{
+                headers: {
+                    'Authorization': `Bearer ${store.getToken}`,
+                },
+            });
+            state.todos = response.data.data;
+        }
+        fetchTodos();
         const todo = async() =>{
             await axios.post('/api/todos',form,{
                 headers: {
@@ -90,6 +83,7 @@ export default{
                 },
             }).then(res=>{
                 if(res.data.status == true){
+                    fetchTodos();
                     router.push({name:'TodoList'})
                     console.log('Data Found');
                     messages.value = res.data.message;
@@ -107,6 +101,7 @@ export default{
                     'Authorization': `Bearer ${store.getToken}`,
                 },
             }).then(res=>{
+                fetchTodos();
                 console.log('Sucessfully Deleted');
             }).catch(e=>{
                 error.value = e.response.data.message
@@ -117,7 +112,8 @@ export default{
             todo,
             error,
             messages,
-            deleteData
+            deleteData,
+            ...toRefs(state),
         }
     },
 }

@@ -41,7 +41,7 @@
                                             <p>{{task.task_name}}</p>
                                         </td>
                                         <td class="align-middle">
-                                            <p>{{task.todo_id}}</p>
+                                            <p>{{task.name}}</p>
                                         </td>
                                         <td class="align-middle">
                                             <button class="btn btn-danger" @click="deleteData(task.id)">Delete</button>
@@ -58,33 +58,23 @@
 </template>
 
 <script>
-import { reactive,ref } from 'vue'
+import { reactive,ref,toRefs } from 'vue'
 import { useRouter } from "vue-router"
 import { UserStore } from '@/store/UserStore.js'
 export default{
     data() {
         return {
-            tasks: [],
             todos: [],
         };
     },
     async mounted() {
         const store = UserStore();
-        const data = ref([]);
         try {
-            const response = await axios.get('/api/tasks',{
-                headers: {
-                    'Authorization': `Bearer ${store.getToken}`,
-                },
-            });
-            this.tasks = response.data.data;
-
             axios.get('/api/todos',{
                 headers: {
                     'Authorization': `Bearer ${store.getToken}`,
                 },
             }).then(res => {
-                console.log(res);
                 this.todos = res.data.data;
             });
         } catch (error) {
@@ -100,6 +90,18 @@ export default{
         });
         let error = ref('')
         let messages = ref('')
+        const state = reactive({
+            tasks: []
+        })
+        const fetchTasks = async () => {
+            const response = await axios.get('/api/tasks',{
+                headers: {
+                    'Authorization': `Bearer ${store.getToken}`,
+                },
+            });
+            state.tasks = response.data.data;
+        }
+        fetchTasks();
         const task = async() =>{
             await axios.post('/api/tasks',form,{
                 headers: {
@@ -107,6 +109,7 @@ export default{
                 },
             }).then(res=>{
                 if(res.data.status == true){
+                    fetchTasks();
                     router.push({name:'TaskList'})
                     console.log('Data Found');
                     messages.value = res.data.message;
@@ -124,7 +127,13 @@ export default{
                     'Authorization': `Bearer ${store.getToken}`,
                 },
             }).then(res=>{
-                console.log('Sucessfully Deleted');
+                console.log(res);
+                if(res.data.status == true){
+                    fetchTasks();
+                    console.log('Sucessfully Deleted');
+                }else{
+                    error.value = res.data.message;
+                }
             }).catch(e=>{
                 error.value = e.response.data.message
             })
@@ -135,6 +144,7 @@ export default{
             error,
             messages,
             deleteData,
+            ...toRefs(state),
         }
     },
 }

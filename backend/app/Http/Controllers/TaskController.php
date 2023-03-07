@@ -10,7 +10,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $data = Task::get();
+        $data = Task::join('todos','todos.id','=','tasks.todo_id')->get();
         if ($data->isNotEmpty()) {
             return response()->json([
                 'status' => true,
